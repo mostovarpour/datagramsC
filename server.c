@@ -1,3 +1,13 @@
+/*
+ * Daniel Durazo
+ * Matthew Ostovarpour
+ * CS460
+ * Datagrams in C server
+ * 11/12/15
+ */
+
+#include "header.h"
+
 int main(void)
 {
 	struct sockkaddr_in server_address, client_address;

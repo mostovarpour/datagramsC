@@ -1,3 +1,12 @@
+/*
+ * Matthew Ostovarpour
+ * Daniel Durazo
+ * Datagrams in C client
+ * 1112/15
+ */
+
+#include "header.h"
+
 int main(void){
 	struct sockaddr_in server_address;
 	int client_socket;
@@ -5,15 +14,15 @@ int main(void){
 	char buf[BUFLEN];
 	char message[BUFLEN];
 
-	if (client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1){
-				 perror("socket");
-				 exit(1);
-             }
+	if (client_socket =( socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1){
+		perror("socket");
+	    exit(1);
+    }
     memset((char *)&server_address, 0, sizeof(server_address));
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(PORT);
 
-    if (inet_aton(SERVER, &server_address.sin_addr) == 0){
+    if (inet_aton(SERVER_ADDR, &server_address.sin_addr) == 0){
     	fprintf(stderr, "inet_aton() failed\n");
     	exit(1);
     }
@@ -24,7 +33,7 @@ int main(void){
 
     	//sends the message
     	if (sendto(client_socket, message, strlen(message), 0, (struct sockaddr *)&server_address, slen) == -1){
-    		perror("sendto"(;
+    		perror("sendto");
     		exit(1);
         }
 

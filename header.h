@@ -24,6 +24,8 @@
 
 #define NUM_CONNECTIONS 1       // number of pending connections in the connection queue
 
+#define BUFLEN 512              //Our buffer size
+
 /* Function prototypes */
 void *number_guesser(void*);
 
