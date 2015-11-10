@@ -10,7 +10,7 @@
 
 #define _REENTRANT
 
-int main(void)
+int main( int argc, char** argv)
 {
 	struct sockaddr_in server_address, client_address;
 
@@ -39,7 +39,7 @@ int main(void)
 
      //keep listening for data
      while(!0){
-     	 printf("Waiting for data...");
+     	 printf("Waiting for data...\n");
      	 fflush(stdout);
 
      	 //try to recieve some data, this is a blocking call
@@ -50,8 +50,8 @@ int main(void)
          }
 
          //printf details of the client/peer and the data received
-         printf("Received packet from %s:%d\n", inet_ntoa(client_address.sin_addr, ntohs(client_address.sin_port)));
-         printf("Data: %s\n", buf);
+         //printf("Received packet from %s:%d\n", inet_ntoa(client_address.sin_addr, ntohs(client_address.sin_port)));
+         //printf("Data: %s\n", buf);
 
          //now reply the client with the same data
          if (sendto(server_socket, buf, recv_len, 0, (struct sockaddr *)&client_address, client_address_len) == -1)

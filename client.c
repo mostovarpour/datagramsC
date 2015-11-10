@@ -7,14 +7,14 @@
 
 #include "header.h"
 
-int main(void){
+int main(int argc, char** argv){
 	struct sockaddr_in server_address;
 	int client_socket;
 	socklen_t slen = sizeof(server_address);
 	char buf[BUFLEN];
 	char message[BUFLEN];
 
-	if (client_socket =( socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1){
+	if ((client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1){
 		perror("socket");
 	    exit(1);
     }
@@ -40,5 +40,10 @@ int main(void){
         //receive a reply and print it
         //clear the buffer by filling null, it might have previously received data
         memset(buf, '\0', BUFLEN);
+        if((recvfrom(client_socket, buf, 512, 0, NULL, NULL)) == -1){
+            perror("Receive error");
+            exit(1);
+        }
+        printf("Received: %s\n", buf);
     }
 }
