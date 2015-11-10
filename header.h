@@ -26,8 +26,5 @@
 
 #define BUFLEN 512              //Our buffer size
 
-/* Function prototypes */
-void *number_guesser(void*);
-
 //Our mutex
 extern pthread_mutex_t mut;

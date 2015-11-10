@@ -8,9 +8,11 @@
 
 #include "header.h"
 
+#define _REENTRANT
+
 int main(void)
 {
-	struct sockkaddr_in server_address, client_address;
+	struct sockaddr_in server_address, client_address;
 
 	int server_socket;
 	ssize_t recv_len;
@@ -48,13 +50,13 @@ int main(void)
          }
 
          //printf details of the client/peer and the data received
-         printf("Received packet from %s:%d\n", inet_ntoa(client_address.sin_addr, ntohs(client_address.sin_port));
+         printf("Received packet from %s:%d\n", inet_ntoa(client_address.sin_addr, ntohs(client_address.sin_port)));
          printf("Data: %s\n", buf);
 
          //now reply the client with the same data
          if (sendto(server_socket, buf, recv_len, 0, (struct sockaddr *)&client_address, client_address_len) == -1)
          {
-         	 perror("sendto"(;
+         	 perror("sendto");
          	 exit(1);
          }
      }
