@@ -1,0 +1,170 @@
+Datagram Socket Programming
+
+
+This is the datagram programming in c example that Dr. Otte showed us in class
+int main(void)
+{
+	struct sockkaddr_in server_address, client_address;
+
+	int server_socket;
+	ssize_t recv_len;
+	socklen_t client_address_len = sizeof(client_address);
+	char buf[BUFLEN];
+
+	//create a udp socket
+	if ((server_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1){
+		perror("Error creating socket.");
+		exit(1);
+    }
+     //zero out the structure
+     memset((char *) &server_address, 0, sizeof(server_address));
+
+     server_address.sin_family = AF_INET;
+     server_address.sin_addr.s_addr = htonl(INADDR_ANY);
+     server_address.sin_port = htons(PORT);
+
+     //bind socket to port
+     if(bind(server_socket, (struct sockaddr*)&server_address, sizeof(server_address)) == -1){
+     	 perror("Error binding socket.");
+     	 exit(1);
+     }
+
+     //keep listening for data
+     while(!0){
+     	 printf("Waiting for data...");
+     	 fflush(stdout);
+
+     	 //try to recieve some data, this is a blocking call
+     	 if ((recv_len = recvfrom(server_socket, buf, BUFLEN, 0, (struct sockaddr *)&client_address, &client_address_len)) == -1)
+         {
+         	 perror("recvfrom");
+         	 exit(1);
+         }
+
+         //printf details of the client/peer and the data received
+         printf("Received packet from %s:%d\n", inet_ntoa(client_address.sin_addr, ntohs(client_address.sin_port));
+         printf("Data: %s\n", buf);
+
+         //now reply the client with the same data
+         if (sendto(server_socket, buf, recv_len, 0, (struct sockaddr *)&client_address, client_address_len) == -1)
+         {
+         	 perror("sendto"(;
+         	 exit(1);
+         }
+     }
+
+     //close(server_socket);
+     return 0;
+}
+
+
+This is for the datagram client that he showed us in class
+int main(void){
+	struct sockaddr_in server_address;
+	int client_socket;
+	socklen_t slen = sizeof(server_address);
+	char buf[BUFLEN];
+	char message[BUFLEN];
+
+	if (client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1){
+				 perror("socket");
+				 exit(1);
+             }
+    memset((char *)&server_address, 0, sizeof(server_address));
+    server_address.sin_family = AF_INET;
+    server_address.sin_port = htons(PORT);
+
+    if (inet_aton(SERVER, &server_address.sin_addr) == 0){
+    	fprintf(stderr, "inet_aton() failed\n");
+    	exit(1);
+    }
+
+    while(!0){
+    	printf("Enter message: ");
+    	gets(message);
+
+    	//sends the message
+    	if (sendto(client_socket, message, strlen(message), 0, (struct sockaddr *)&server_address, slen) == -1){
+    		perror("sendto"(;
+    		exit(1);
+        }
+
+        //receive a reply and print it
+        //clear the buffer by filling null, it might have previously received data
+        memset(buf, '\0', BUFLEN);
+    }
+}
+
+//This is a server in java for datagram programming
+import java.net.*;
+public class OddEvenDatagramServer{
+	public static void main(String[] args){
+		DatagramSocket socket = null;
+		byte[] data = new bytes[80];
+		DatagramPacket packet = new DatagramPacket(data, data.length);
+		int serverPort = 23657;
+		String inputLine = "", outputLine = "";
+
+		try{
+			//create a socket to receive/send packets
+			socket = new DatagramSocket(serverPort);
+			System.out.println("Server datagram socket set up");
+        }catch (Exception e){
+        	System.err.printlnf("Datagram socket could not be set up at port " + serverPort);
+        	System.exit(1);
+        }
+
+        while(true){
+        	try{
+                System.out.println("Waiting for packet to come in");
+                //waiting to receive packet from client
+                socket.receive(packet);
+                System.out.println("Packet received");
+
+                //get the data from the packet, which is an array of bytes, and convert to string
+                inputLine = new String(packet.getData(), 0, packet.getLength());
+                System.out.println("Received from client: " + inputLine);
+
+                //check for odd/even
+                try{
+
+                }
+            } 
+        }
+    }
+}
+
+//This is a client in java from datagram programming
+public class OddEvenDatagramClient{
+	public static void main(String[] args){
+		Datagram socket = null;
+		//lots of stuff here
+
+		//this is near the bottom
+		while(true){
+			try{
+				//read a number from the keyboard
+				System.out.print("Enter a number: ");
+				inputLine = stdIn.readLine();
+
+				//convert string to byte array and set it as data in packet
+				packet.setData(inputLine.getBytes());
+
+				//send the packet
+				socket.send(packet);
+
+				//reset the data section in the packet to create enough space for receiving
+				//this is crucial, otherwise the response gets truncated if the length of prior inputLine is shorter than the response
+				packet.setData(data);
+
+				//receive the response from server
+				socket.receive(packet);
+
+				//get the data and make it a string
+				response = new String(packet.getData(), 0, packet.getLength());
+				System.out.println("The server said: " + inputLine + " --> " + response);
+            } catch (Exception e){
+            }
+        }
+    }
+}
