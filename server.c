@@ -42,6 +42,10 @@ int main( int argc, char** argv)
      	 printf("Waiting for data...\n");
      	 fflush(stdout);
 
+     	 //DANIEL WE NEED TO FINISH THIS PART DON"T TURN IT IN WITH THIS STILL HERE!!!!!!!!!!!!!
+     	 printf("%s\n", buf);
+         memset(buf, '\0', BUFLEN);
+
      	 //try to recieve some data, this is a blocking call
      	 if ((recv_len = recvfrom(server_socket, buf, BUFLEN, 0, (struct sockaddr *)&client_address, &client_address_len)) == -1)
          {
