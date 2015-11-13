@@ -1,5 +1,4 @@
-/*
- * Daniel Durazo
+/* Daniel Durazo
  * Matthew Ostovarpour
  * CS460
  * Datagrams in C server
@@ -15,12 +14,17 @@ void dnsLookup(int, struct sockaddr_in, socklen_t);
 
 
 int main( int argc, char** argv) {
-
+	
+	// Creating required variables for UDP socket
 	struct sockaddr_in server_address, client_address;
 	int server_socket;
 	ssize_t recv_len;
 	socklen_t client_address_len = sizeof(client_address);
+
+	// Most buffers used will be 512 characters (BUFLEN)
 	char buf[BUFLEN];
+
+	// Store client's choice for each server loop iteration
 	char choice;
 
 	// Create a UDP socket
@@ -32,6 +36,7 @@ int main( int argc, char** argv) {
      // Zero out the structure
      memset((char *) &server_address, 0, sizeof(server_address));
 
+	// Setting address
      server_address.sin_family = AF_INET;
      server_address.sin_addr.s_addr = htonl(INADDR_ANY);
      server_address.sin_port = htons(PORT);
@@ -67,13 +72,15 @@ int main( int argc, char** argv) {
 
 	// Choice 1: Echo
 	if(choice == '1') {
-		
+
+		// For each case, let a function handle what needs to be done
 		echoMessage(server_socket, client_address, client_address_len);
 
 	} 
 	// Choice 2: DNS Lookup 
 	else if(choice == '2') {
 		
+		// Pass in the socket and address to be able to send datagrams back to client
 		dnsLookup(server_socket, client_address, client_address_len);
 
 	} 
@@ -81,7 +88,6 @@ int main( int argc, char** argv) {
 	else {
 		
 		getTime(server_socket, client_address, client_address_len);
-		
 	}
 
      }
@@ -117,9 +123,12 @@ void echoMessage(int server_socket, struct sockaddr_in client_address, socklen_t
 
 void getTime(int server_socket, struct sockaddr_in client_address, socklen_t client_address_len) {
 
+	// Set up variables to use time() and localtime()
 	time_t currentTime;
 	struct tm *timeInfo;
-	char timeString[9];
+	char timeString[9];	// Holds the final time in a string format
+
+	// Get the server's local time, format it correctly, and place in buffer
 	time(&currentTime);
 	timeInfo = localtime(&currentTime);
 	strftime(timeString, sizeof(timeString), "%H:%M", timeInfo);
@@ -137,15 +146,15 @@ void getTime(int server_socket, struct sockaddr_in client_address, socklen_t cli
 
 
 void dnsLookup(int server_socket, struct sockaddr_in client_address, socklen_t client_address_len) {
-    //struct for our address info
+    // Struct for our address info
     struct addrinfo *result, *res;
     struct sockaddr_in *h;
 
-    //Our buffer and integer for received bytes
+    // Our buffer and integer for received bytes
 	char buf[BUFLEN];
 	int recv_len;
 
-    //clear le buffer
+    // Clear the buffer
     memset(buf, '\0', BUFLEN);
 
 	// Try to receive the message from the client, blocking call, show error if something goes wrong

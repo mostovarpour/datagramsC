@@ -1,39 +1,46 @@
-/*
+/* Daniel Durazo
  * Matthew Ostovarpour
- * Daniel Durazo
- * Datagrams in C client
- * 1112/15
+ * CS460
+ * Datagrams in C server
+ * 11/12/15
  */
 
 #include "header.h"
 
+// Function Prototypes
 void echoServer(int, struct sockaddr_in, socklen_t); 
 void dnsLookup(int, struct sockaddr_in, socklen_t);
 void serverTime(int, struct sockaddr_in, socklen_t);
 
 int main(int argc, char** argv){
+
+	// Creating required variables for UDP socket
 	int userChoice;
 	struct sockaddr_in server_address;
 	int client_socket;
 	socklen_t slen = sizeof(server_address);
-	char buf[BUFLEN];
-	char message[BUFLEN];
 
+	// Creating buffer for sending/receiving datagrams (512 characters, defined in header)
+	char buf[BUFLEN];
+
+	// Create the socket
 	if ((client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1){
 		perror("Socket error\n");
 	    exit(1);
     }
 
+	// Set up the address
     memset((char *)&server_address, 0, sizeof(server_address));
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(PORT);
 
+	// Internet address manipulation?
     if (inet_aton(SERVER_ADDR, &server_address.sin_addr) == 0){
     	perror("inet_aton() failed\n");
     	exit(1);
     }
 
-    // Keep allowing user to choose, choice of 4 will exit
+    // Keep allowing user to choose, choice of 4 will exit, nice visual menu for easy understanding
     while(1){
         printf("==========Welcome to the Datagram programming assignment!==========\n");
         printf("=         Enter 1 to use the echo server.                         =\n");
@@ -54,9 +61,13 @@ int main(int argc, char** argv){
 		dnsLookup(client_socket, server_address, slen);
         }
         else if(userChoice == 3) {
+		// Get the server time
             serverTime(client_socket, server_address, slen);
         }
+	// Exit the client
         else if(userChoice == 4) return 0;
+
+	// Invalid input/choice
         else printf("You must enter either 1, 2, 3, or 4.\n");
     }
 }
