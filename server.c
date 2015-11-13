@@ -141,14 +141,23 @@ void dnsLookup(int server_socket, struct sockaddr_in client_address, socklen_t c
     struct addrinfo *result, *res;
     struct sockaddr_in *h;
 
-    //our buffer
+    //Our buffer and integer for received bytes
 	char buf[BUFLEN];
-
-	//this is to hold the addrinfo
-    int status = getaddrinfo(&buf[1], NULL, NULL, &result);
+	int recv_len;
 
     //clear le buffer
     memset(buf, '\0', BUFLEN);
+
+	// Try to receive the message from the client, blocking call, show error if something goes wrong
+	 if ((recv_len = recvfrom(server_socket, buf, sizeof(buf), 0, (struct sockaddr *)&client_address, &client_address_len)) == -1)
+         {
+         	 perror("Error in recvfrom");
+         	 exit(1);
+         }
+
+	//this is to hold the addrinfo
+    int status = getaddrinfo(buf, NULL, NULL, &result);
+
 
     //This determines what to do based on if there is an error with getaddrinfo
     if(status == 0){
@@ -165,7 +174,7 @@ void dnsLookup(int server_socket, struct sockaddr_in client_address, socklen_t c
     }
 
     //Now we are going to send what is in the buffer (either the error message or the IP address)
-    if(sendto(server_socket, buf, BUFLEN, 0, (struct sockaddr*)&client_address, client_address_len) == -1){
+    if(sendto(server_socket, buf, sizeof(buf), 0, (struct sockaddr*)&client_address, client_address_len) == -1){
         perror("sendto");
         exit(1);
     }

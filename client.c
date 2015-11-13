@@ -50,8 +50,8 @@ int main(int argc, char** argv){
 	}
 
         else if(userChoice == 2) {
-
-
+		// Let user get the IP for their requested URL
+		dnsLookup(client_socket, server_address, slen);
         }
         else if(userChoice == 3) {
             serverTime(client_socket, server_address, slen);
@@ -106,6 +106,46 @@ void echoServer(int client_socket, struct sockaddr_in server_address, socklen_t 
 }
 
 void dnsLookup(int client_socket, struct sockaddr_in server_address, socklen_t slen){
+
+	// Create a character buffer (for a string) for sending & receiving
+	char buf[BUFLEN];
+
+	// Clear the buffer for safe usage (less risk of garbage data or previous long message)
+	memset(buf, '\0', sizeof(buf));
+
+	// Set the first character to let server know to echo message back
+	buf[0] = '2';
+
+	// Send the message to the server, display error if something went wrong
+    	if (sendto(client_socket, buf, sizeof(buf), 0, (struct sockaddr *)&server_address, slen) == -1){
+    		perror("Error sending to server\n");
+    		exit(1);
+        }
+
+	// Clear the buffer for safe usage (less risk of garbage data or previous long message)
+	memset(buf, '\0', sizeof(buf));
+
+	// Grab a string from the user and place it after the initial character
+    	printf("Enter URL to IP lookup: ");
+    	scanf(" %[^\n]%*c", buf);
+
+    	// Send the message to the server, display error if something went wrong
+    	if (sendto(client_socket, buf, sizeof(buf), 0, (struct sockaddr *)&server_address, slen) == -1){
+    		perror("Error sending to server");
+    		exit(1);
+        }
+
+	// Clear the buffer again for safe usage
+        memset(buf, '\0', sizeof(buf));
+
+        // Receive the echo'd message from the server
+        if((recvfrom(client_socket, buf, sizeof(buf), 0, NULL, NULL)) == -1){
+            perror("Receive error");
+            exit(1);
+        }
+
+	// Print the received echo message to show it worked!
+        printf("The address resolved to: %s\n", buf);
 
 }
 
