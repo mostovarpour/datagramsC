@@ -84,7 +84,7 @@ void echoServer(int client_socket, struct sockaddr_in server_address, socklen_t 
 
 	// Grab a string from the user and place it after the initial character
     	printf("Enter message: ");
-    	scanf("%s", buf);
+    	scanf(" %[^\n]%*c", buf);
 
     	// Send the message to the server, display error if something went wrong
     	if (sendto(client_socket, buf, sizeof(buf), 0, (struct sockaddr *)&server_address, slen) == -1){
