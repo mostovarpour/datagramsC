@@ -165,7 +165,7 @@ void dnsLookup(int server_socket, struct sockaddr_in client_address, socklen_t c
     }
 
     //Now we are going to send what is in the buffer (either the error message or the IP address)
-    if(sendto(server_socket, buf, BUFLEN, 0, client_address, client_address_len) == -1){
+    if(sendto(server_socket, buf, BUFLEN, 0, (struct sockaddr*)&client_address, client_address_len) == -1){
         perror("sendto");
         exit(1);
     }
