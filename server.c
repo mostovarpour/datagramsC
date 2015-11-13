@@ -137,15 +137,40 @@ void getTime(int server_socket, struct sockaddr_in client_address, socklen_t cli
 
 
 void dnsLookup(int server_socket, struct sockaddr_in client_address, socklen_t client_address_len) {
+    //struct for our address info
+    struct addrinfo *result, *res;
+    struct sockaddr_in *h;
 
-	// Buffer to hold the message from client
+    //our buffer
 	char buf[BUFLEN];
 
-	// Try to receive the message from the client, blocking call, show error if something goes wrong
-	int recv_len = recvfrom(server_socket, buf, sizeof(buf), 0, (struct sockaddr *)&client_address, &client_address_len);
-        if(recv_len == -1) {
-		perror("Error in recvfrom getting message");
-         	exit(1);
-        }
+	//this is to hold the addrinfo
+    int status = getaddrinfo(&buf[1], NULL, NULL, &result);
+
+    //clear le buffer
+    memset(buf, '\0', BUFLEN);
+
+    //This determines what to do based on if there is an error with getaddrinfo
+    if(status == 0){
+        //get the ip addr from the struct
+        h = (struct sockaddr_in*)result->ai_addr;
+        strcpy(buf, inet_ntoa(h->sin_addr));
+
+        //we need to free the memory space
+        freeaddrinfo(result);
+    }else{
+        //if this happens then there is an error
+        perror("getaddrinfo error\n");
+        strcpy(buf, "getaddrinfo error\n");
+    }
+
+    //Now we are going to send what is in the buffer (either the error message or the IP address)
+    if(sendto(server_socket, buf, BUFLEN, 0, client_address, client_address_len) == -1){
+        perror("sendto");
+        exit(1);
+    }
+
+    //Now we want to print out the buffer on the server side
+    printf("Sending IP address %s\n", buf);
 }
 
