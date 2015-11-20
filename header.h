@@ -29,5 +29,3 @@
 
 #define BUFLEN 512              //Our buffer size
 
-//Our mutex
-extern pthread_mutex_t mut;

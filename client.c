@@ -42,13 +42,13 @@ int main(int argc, char** argv){
 
 	// Keep allowing user to choose, choice of 4 will exit, nice visual menu for easy understanding
 	while(1){
-		printf("==========Welcome to the Datagram programming assignment!==========\n");
-		printf("=         Enter 1 to use the echo server.                         =\n");
-		printf("=         Enter 2 to use the DNS lookup service.                  =\n");
-		printf("=         Enter 3 to get the server time.                         =\n");
-		printf("=         Enter 4 to exit.                                        =\n");
-		printf("===================================================================\n");
-		printf("Enter your choice: ");
+		printf("+-------- C Datagram Client --------+\n");
+		printf("|     1. Echo Server                |\n");
+		printf("|     2. DNS Lookup service         |\n");
+		printf("|     3. Get server time.           |\n");
+		printf("|     4. Quit                       |\n");
+		printf("+-----------------------------------+\n");
+		printf("What would you like to do: ");
 		scanf("%d", &userChoice);
 
 		if(userChoice == 1) { 
@@ -68,7 +68,7 @@ int main(int argc, char** argv){
 		else if(userChoice == 4) return 0;
 
 		// Invalid input/choice
-		else printf("You must enter either 1, 2, 3, or 4.\n");
+		else printf("You must enter 1, 2, 3, or 4.\n\n");
 	}
 }
 
@@ -94,7 +94,7 @@ void echoServer(int client_socket, struct sockaddr_in server_address, socklen_t 
 	memset(buf, '\0', sizeof(buf));
 
 	// Grab a string from the user and place it after the initial character
-	printf("Enter message: ");
+	printf("\nEnter message to send: ");
 	scanf(" %[^\n]%*c", buf);
 
 	// Send the message to the server, display error if something went wrong
@@ -113,7 +113,7 @@ void echoServer(int client_socket, struct sockaddr_in server_address, socklen_t 
 	}
 
 	// Print the received echo message to show it worked!
-	printf("Received from server: %s\n", buf);
+	printf(" Returned from server: %s\n\n", buf);
 }
 
 void dnsLookup(int client_socket, struct sockaddr_in server_address, socklen_t slen){
@@ -137,7 +137,7 @@ void dnsLookup(int client_socket, struct sockaddr_in server_address, socklen_t s
 	memset(buf, '\0', sizeof(buf));
 
 	// Grab a string from the user and place it after the initial character
-	printf("Enter URL to IP lookup: ");
+	printf("\nURL to lookup: ");
 	scanf(" %[^\n]%*c", buf);
 
 	// Send the message to the server, display error if something went wrong
@@ -156,7 +156,7 @@ void dnsLookup(int client_socket, struct sockaddr_in server_address, socklen_t s
 	}
 
 	// Print the received echo message to show it worked!
-	printf("The address resolved to: %s\n", buf);
+	printf("The URL IP is: %s\n\n", buf);
 
 }
 
@@ -187,7 +187,7 @@ void serverTime(int client_socket, struct sockaddr_in server_address, socklen_t 
 	}
 
 	// Print the received echo message to show it worked!
-	printf("Time from server: %s\n", buf);
+	printf("\nThe server time is: %s\n\n", buf);
 
 }
 

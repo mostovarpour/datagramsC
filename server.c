@@ -51,7 +51,7 @@ int main( int argc, char** argv) {
 	while(!0){
 
 		// Initially waiting for datagram
-		printf("Waiting for data...\n");
+		printf("Waiting for data...\n\n");
 
 		// Clear out the buffer memory for safe usage each time
 		memset(buf, '\0', sizeof(buf));
@@ -102,6 +102,9 @@ void echoMessage(int server_socket, struct sockaddr_in client_address, socklen_t
 	char buf[BUFLEN];
 	int recv_len;
 
+	// Clear the buffer
+	memset(buf, '\0', BUFLEN);
+
 	// Try to receive the message from the client, blocking call, show error if something goes wrong
 	if ((recv_len = recvfrom(server_socket, buf, sizeof(buf), 0, (struct sockaddr *)&client_address, &client_address_len)) == -1)
 	{
@@ -110,7 +113,8 @@ void echoMessage(int server_socket, struct sockaddr_in client_address, socklen_t
 	}
 
 	// Display server side message for echo request
-	printf("Client requested to echo: %s\n\n", buf);
+	printf("Client echo request: %s\n", buf);
+	printf("  Sending to client: %s\n\n", buf);
 
 	// Send the message back to the client, show error if something goes wrong
 	if (sendto(server_socket, buf, recv_len, 0, (struct sockaddr *)&client_address, client_address_len) == -1)
@@ -134,7 +138,8 @@ void getTime(int server_socket, struct sockaddr_in client_address, socklen_t cli
 	strftime(timeString, sizeof(timeString), "%H:%M", timeInfo);
 
 	// Display server side message for this request
-	printf("Client requested the time: %s\n", timeString);
+	printf("Client requesting local server time\n");
+	printf("Sending local time: %s\n\n", timeString);
 
 	// Send the time message back to the client, show error if something goes wrong
 	if (sendto(server_socket, timeString, sizeof(timeString), 0, (struct sockaddr *)&client_address, client_address_len) == -1)
@@ -164,6 +169,9 @@ void dnsLookup(int server_socket, struct sockaddr_in client_address, socklen_t c
 		exit(1);
 	}
 
+	//Display requested URL to look up
+	printf(" Client DNS lookup: %s\n", buf);
+
 	//this is to hold the addrinfo
 	int status = getaddrinfo(buf, NULL, NULL, &result);
 
@@ -182,13 +190,13 @@ void dnsLookup(int server_socket, struct sockaddr_in client_address, socklen_t c
 		strcpy(buf, "getaddrinfo error\n");
 	}
 
+	//Print out the result of looking up ip address
+	printf("Sending IP address: %s\n\n", buf);
+
 	//Now we are going to send what is in the buffer (either the error message or the IP address)
 	if(sendto(server_socket, buf, sizeof(buf), 0, (struct sockaddr*)&client_address, client_address_len) == -1){
 		perror("sendto");
 		exit(1);
 	}
-
-	//Now we want to print out the buffer on the server side
-	printf("Sending IP address %s\n", buf);
 }
 
